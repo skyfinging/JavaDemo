@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+	namespace就是个命名空间，与struts2的namespace类似
+	是为了避免与其他mapper.xml的句柄id发生重复
+ -->
+<mapper namespace="user">
+    <!--
+        查询所有用户列表的statement
+        因为开启了驼峰命名，所以不需要在每个字段后面加别名就可以直接把符合规则的字段映射到对应实体类的属性上
+        resultType为返回的类型名，因为在mybatis-cfg.xml中配置了别名，所以这里可以直接写user
+    -->
+    <select id="listUser" resultType="user">
+		SELECT USER_ID, USER_NAME, PASSWORD FROM USER
+	</select>
+</mapper>
