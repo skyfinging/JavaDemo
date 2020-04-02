@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" packages="demo.diff.log">
+	<Properties>
+		<property name="log.path">./logs</property>
+	</Properties>
+	<Appenders>
+		<!--控制台输出-->
+		<console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %l : %msg%xEx%n"/>
+		</console>
+		<!--自定义日志文件输出-->
+		<MyLogAppender name="MyLogAppender" fileName="${log.path}/log-${index}.log">
+			<PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] [%-5p] {%F:%L} - %m%n" />
+		</MyLogAppender>
+	</Appenders>
+	<Loggers>
+		<Root level="debug">
+			<appender-ref ref="Console"/>
+			<appender-ref ref="MyLogAppender"/>
+		</Root>
+	</Loggers>
+</Configuration>
