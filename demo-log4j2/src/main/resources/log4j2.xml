@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="logdir">logs</Property>
+        <!-- <Property name="logdir">${sys:catalina.base}/logs</Property> -->
+    </Properties>
+    <Appenders>
+        <!-- fileName中不知道怎么带上日期 -->
+        <RollingFile name="INFO"
+                     fileName="${logdir}/INFO.log"
+                     filePattern="${logdir}/INFO_%d{yyyy-MM-dd}_%i.log">
+            <Filters>
+                <!--
+                    定义两个过滤器，第一个过滤器过滤掉warn以上级别的日志，然后warn级别以下的日志，继续使用第二个过滤器
+                    第二个过滤器接收info以上级别的日志，两个过滤器组合起来就只剩下info日志了
+                    onMismatch="NEUTRAL" 表示没匹配到的日志级别，将继续使用下一个过滤器
+                -->
+                <ThresholdFilter level="warn" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-3p %5c %3x %C %L - %m%n"/>
+
+            <!--
+                定义每个文件最大30M，在每天0点生成新一天的文件
+                interval=1，表示周期是1，因为filterPattern中的日期格式最后一位是天，所以这里表示周期是1天
+                modulate="true" 表示整点触发，也就是每天的0点
+                如果是yyyy-MM-dd-HH-mm ，则表示是在一分钟的0秒触发
+            -->
+            <Policies>
+                <TimeBasedTriggeringPolicy modulate="true" interval="1" />
+                <SizeBasedTriggeringPolicy size="30MB" />
+            </Policies>
+
+            <!-- 定义每天最多10个分割文件，最多保留30天-->
+            <DefaultRolloverStrategy max="10">
+                <Delete basePath="${logdir}" maxDepth="1">
+                    <IfFileName glob="INFO_*.log" />
+                    <IfLastModified age="30d" />
+                    <!--
+                    <IfLastModified age="24H" /> 保留24小时，这个单位需要和filePattern中的日期保持同一粒度
+                    <IfLastModified age="60m" /> 保留 60分钟
+                    -->
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <RollingFile name="WARN"
+                     fileName="${logdir}/WARN.log"
+                     filePattern="${logdir}/WARN_%d{yyyy-MM-dd}_%i.log">
+            <Filters>
+                <ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-3p %5c %3x %C %L - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy modulate="true" interval="1" />
+                <SizeBasedTriggeringPolicy size="30MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="10">
+                <Delete basePath="{logdir}/" maxDepth="1">
+                    <IfFileName glob="WARN_*.log" />
+                    <IfLastModified age="30d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <RollingFile name="ERROR"
+                     fileName="${logdir}/ERROR.log"
+                     filePattern="${logdir}/ERROR_%d{yyyy-MM-dd}_%i.log">
+            <Filters>
+                <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-3p %5c %3x %C %L - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy modulate="true" interval="1" />
+                <SizeBasedTriggeringPolicy size="30M" />
+            </Policies>
+            <DefaultRolloverStrategy max="10">
+                <Delete basePath="{logdir}/" maxDepth="1">
+                    <IfFileName glob="ERROR_*.log" />
+                    <IfLastModified age="30d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <RollingFile name="USERINFOFILE"
+                     fileName="${logdir}/USERINFOFILE.log"
+                     filePattern="${logdir}/USERINFOFILE_%d{yyyy-MM-dd}.log">
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} \t %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy modulate="true" interval="1" />
+                <SizeBasedTriggeringPolicy size="128KB" />
+            </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="{logdir}/" maxDepth="1">
+                    <IfFileName glob="USERINFOFILE_*.log" />
+                    <IfLastModified age="30d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <Console name="USERINFO" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} \t %m%n"/>
+        </Console>
+
+
+    </Appenders>
+
+    <loggers >
+        <logger name="COMBAUSERINFO" level="INFO">
+            <appender-ref ref="USERINFO" />
+            <appender-ref ref="USERINFOFILE" />
+        </logger>
+        <root level="INFO">
+            <appender-ref ref="INFO" />
+            <appender-ref ref="WARN" />
+            <appender-ref ref="ERROR" />
+        </root>
+    </loggers>
+</Configuration>
