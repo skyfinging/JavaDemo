@@ -1,0 +1,20 @@
+这个工程是提供给辽宁移动的权限管理系统使用，用于读取cms网管的用户权限信息，定时生成对应的csv文件
+要求：
+1.定时在晚上8点之前生成csv文件
+2.csv文件路径放置在ftp目录上，ftp目录举例：ftp服务器IP地址\SynchroJurisdiction\00090058\4GWXWLZYDD_jurisdiction.csv
+3.ftp服务由我方提供，但本程序不提供ftp服务
+4.csv文件格式如下：
+    appid	changetype	uid	    employeenumber	cn	        departmentnumber	permissionname	permissionid	description	permissiontype	range	Mobile
+    90050	add	    zhanghongyufs	400	    张宏宇（抚顺）	137139	            登录权限	    2		                    TY	            0	13804130050
+    appid               从移动申请，csv文件中全部一样
+    changetype          固定值，add
+    uid                 取user_info.user_name
+    employeenumber      为空
+    cn                  取user_info.real_name
+    departmentnumber    为空
+    permissionname      取AUTHORITY_INFO.auth_name
+    permissionid        取AUTHORITY_INFO.auth_id
+    description         为空
+    permissiontype      固定值，TY
+    range               固定值，1
+    Mobile              取user_info.tel
