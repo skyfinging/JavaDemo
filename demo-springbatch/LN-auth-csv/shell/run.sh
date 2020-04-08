@@ -1,0 +1,1 @@
+java -Xms128m -Xmx1024m -jar LN-auth-csv-1.0-SNAPSHOT.jar
